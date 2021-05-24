@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Creating Vega Viz</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+    <style>
+        .imageLarge{
+            z-index: 1;
+            left: 723px;
+        }
+    </style>
+  </head>
+  <body>
+    <p style="font-weight:bold;text-align:center;font-size:50px;">
+        Interactive Vega-lite pyramid plot
+    </p>
+    <p style="font-weight:bold;text-align:center;font-size:15px;">
+        * VisualReality *
+    </p>
+    <p style="font-weight:bold;text-align:center;font-size:22px;">
+        ...
+    </p>
+    <hr>
+    
+    <div id="vis" class="imageLarge"></div>
+    <script type="text/javascript">
+      var yourViz = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json"
+,  "description": "A population pyramid for Energy Consumption over Years",
+"data": { "url": "https://raw.githubusercontent.com/mkeutgen/dataviz_energy/main/Sub-Meansumrynew_LOG_pos.csv", "format":{"type":"csv"}},
+
+ "params": [{
+    "name": "filter", "value":"Africa",
+    "select": {"type": "point", "fields": ["continent"]},
+    "bind": {"input": "select", "options": ["Africa", "Americas", "Asia", "Europe", "Oceania"]}
+  }],
+
+ "transform": [
+    {"filter":{ "field":"energy_type" , "oneOf":["fossil", "low_carbon"]}},
+    {"filter":{"param":"filter"}}
+    ],
+
+  "spacing": 0,
+  "hconcat": [{
+    "transform": [{
+      "filter": {"field": "discgdp", "equal": "Low GDPpc"}
+    }],
+    "title": "Low GDPpc",
+    "mark": "bar",
+    "height":600,
+    "encoding": {
+      "y": {
+        "field": "year", "axis": null, "sort": "ascending"
+      },
+
+      "x": {
+        "field": "logmeanconsmp", "type":"quantitative",
+        "title": "Log Mean Consumption",
+        "axis": {"format": "s"},
+        "sort": "descending",
+        "scale":{"domain":[0,15]}
+      },
+
+      "color": {
+        "field": "energy_type",
+        "scale": {"range": ["#675193", "#ca8861"]}
+      }
+    }
+  }, {
+    "width": 20,
+    "height":600,
+    "view": {"stroke": null},
+    "mark": {
+      "type": "text",
+      "align": "center"
+    },
+    "encoding": {
+      "y": {"field": "year", "type": "ordinal", "axis": null, "sort": "ascending"},
+      "text": {"field": "year", "type": "quantitative"}
+    }
+  }, {
+    "transform": [{
+      "filter": {"field": "discgdp", "equal": "High GDPpc"}
+    }],
+    "title": "High GDPpc",
+    "mark": "bar",
+    "height":600,
+    "encoding": {
+      "y": {
+        "field": "year", "title": null,
+        "axis": null, "sort": "ascending"
+      },
+      "x": {
+        "field": "logmeanconsmp", "type":"quantitative",
+        "title": "Log Mean Consumption",
+        "axis": {"format": "s"},
+        "scale":{"domain":[0,15]}
+      },
+      "color": {
+        "field": "energy_type"}
+      }
+    }
+  ],
+
+  "config": {
+    "view": {"stroke": null},
+    "axis": {"grid": true}
+  }
+      };
+      vegaEmbed('#vis', yourViz);
+    </script>
+  </body>
+</html>
